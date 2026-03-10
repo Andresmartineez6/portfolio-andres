@@ -26,6 +26,8 @@ interface AppState {
   setCursorPosition: (x: number, y: number) => void;
   isLoading: boolean;
   setLoading: (loading: boolean) => void;
+  loaded: boolean;
+  setLoaded: (loaded: boolean) => void;
   playgroundParams: PlaygroundParams;
   setPlaygroundParam: <K extends keyof PlaygroundParams>(key: K, value: PlaygroundParams[K]) => void;
   resetPlaygroundParams: () => void;
@@ -34,7 +36,7 @@ interface AppState {
 }
 
 const defaultPlaygroundParams: PlaygroundParams = {
-  particleCount: 5000,
+  particleCount: 3000,
   particleSize: 2.0,
   noiseScale: 1.5,
   noiseSpeed: 0.3,
@@ -57,6 +59,8 @@ export const useAppStore = create<AppState>((set) => ({
   setCursorPosition: (x, y) => set({ cursorPosition: { x, y } }),
   isLoading: true,
   setLoading: (loading) => set({ isLoading: loading }),
+  loaded: false,
+  setLoaded: (loaded) => set({ loaded }),
   playgroundParams: { ...defaultPlaygroundParams },
   setPlaygroundParam: (key, value) =>
     set((s) => ({ playgroundParams: { ...s.playgroundParams, [key]: value } })),

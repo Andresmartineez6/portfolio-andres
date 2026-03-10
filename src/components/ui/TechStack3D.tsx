@@ -1,82 +1,88 @@
 "use client";
+import { useRef, useCallback } from "react";
 import { motion } from "motion/react";
 
-interface TechItem { name: string; icon: string; color: string; }
+interface TechItem { name: string; icon: string; color: string; category: string; }
 
 const techs: TechItem[] = [
-  { name: "TypeScript", icon: "TS", color: "#3178c6" },
-  { name: "React", icon: "⚛", color: "#61dafb" },
-  { name: "Next.js", icon: "N", color: "#ffffff" },
-  { name: "Node.js", icon: "⬢", color: "#68a063" },
-  { name: "Three.js", icon: "▲", color: "#ffffff" },
-  { name: "TailwindCSS", icon: "◇", color: "#38bdf8" },
-  { name: "PostgreSQL", icon: "🐘", color: "#336791" },
-  { name: "Docker", icon: "🐋", color: "#2496ed" },
-  { name: "Git", icon: "⎇", color: "#f05032" },
-  { name: "Prisma", icon: "◈", color: "#2d3748" },
-  { name: "JavaScript", icon: "JS", color: "#f7df1e" },
-  { name: "SQL", icon: "⊞", color: "#e48e00" },
-  { name: "PHP", icon: "⟨⟩", color: "#777bb4" },
-  { name: "Figma", icon: "◉", color: "#f24e1e" },
-  { name: "Postman", icon: "▶", color: "#ff6c37" },
-  { name: "GLSL", icon: "◆", color: "#5586a4" },
-  { name: "Vitest", icon: "⚡", color: "#6e9f18" },
-  { name: "ESLint", icon: "⬡", color: "#4b32c3" },
-  { name: "Zustand", icon: "🐻", color: "#764abc" },
-  { name: "Motion", icon: "◎", color: "#ff0055" },
+  { name: "TypeScript", icon: "TS", color: "#3178c6", category: "lang" },
+  { name: "JavaScript", icon: "JS", color: "#f7df1e", category: "lang" },
+  { name: "React", icon: "Re", color: "#61dafb", category: "front" },
+  { name: "Next.js", icon: "Nx", color: "#ffffff", category: "front" },
+  { name: "Three.js", icon: "3D", color: "#049ef4", category: "front" },
+  { name: "TailwindCSS", icon: "Tw", color: "#38bdf8", category: "front" },
+  { name: "Node.js", icon: "No", color: "#68a063", category: "back" },
+  { name: "PostgreSQL", icon: "Pg", color: "#336791", category: "back" },
+  { name: "Prisma", icon: "Pr", color: "#5a67d8", category: "back" },
+  { name: "Docker", icon: "Dk", color: "#2496ed", category: "tool" },
+  { name: "Git", icon: "Gt", color: "#f05032", category: "tool" },
+  { name: "GLSL", icon: "GL", color: "#5586a4", category: "front" },
+  { name: "Zustand", icon: "Zs", color: "#443e38", category: "front" },
+  { name: "Motion", icon: "Mo", color: "#ff0055", category: "front" },
+  { name: "Figma", icon: "Fi", color: "#f24e1e", category: "tool" },
+  { name: "Vitest", icon: "Vi", color: "#6e9f18", category: "tool" },
+  { name: "PHP", icon: "Ph", color: "#777bb4", category: "back" },
+  { name: "SQL", icon: "SQ", color: "#e48e00", category: "lang" },
+  { name: "ESLint", icon: "Es", color: "#4b32c3", category: "tool" },
+  { name: "Postman", icon: "Pm", color: "#ff6c37", category: "tool" },
 ];
 
 function TechCard({ tech, index }: { tech: TechItem; index: number }) {
-  const row = Math.floor(index / 5);
-  const delay = index * 0.04;
+  const cardRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    const el = cardRef.current;
+    const glow = glowRef.current;
+    if (!el || !glow) return;
+    const rect = el.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    el.style.transform = `perspective(600px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) translateZ(8px) scale(1.04)`;
+    glow.style.opacity = "1";
+    glow.style.background = `radial-gradient(circle at ${(x + 1) * 50}% ${(y + 1) * 50}%, ${tech.color}20 0%, transparent 60%)`;
+  }, [tech.color]);
+
+  const handleMouseLeave = useCallback(() => {
+    const el = cardRef.current;
+    const glow = glowRef.current;
+    if (el) el.style.transform = "perspective(600px) rotateY(0deg) rotateX(0deg) translateZ(0px) scale(1)";
+    if (glow) glow.style.opacity = "0";
+  }, []);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20, rotateX: -15 }}
+      initial={{ opacity: 0, y: 24, rotateX: -10 }}
       whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] as const }}
-      whileHover={{
-        y: -4,
-        rotateY: 8,
-        rotateX: -5,
-        transition: { duration: 0.3 },
-      }}
-      className="flex flex-col items-center gap-2 p-3 rounded-xl cursor-default group"
-      style={{
-        perspective: "600px",
-        transformStyle: "preserve-3d",
-        background: "var(--bg-glass)",
-        border: "1px solid var(--border-subtle)",
-        transition: "border-color 0.3s, box-shadow 0.3s",
-        animation: `float ${3 + (row % 3) * 0.5}s ease-in-out ${delay * 2}s infinite`,
-      }}
-      onMouseEnter={(e) => {
-        const el = e.currentTarget as HTMLElement;
-        el.style.borderColor = `${tech.color}33`;
-        el.style.boxShadow = `0 0 20px ${tech.color}15, 0 4px 12px rgba(0,0,0,0.3)`;
-      }}
-      onMouseLeave={(e) => {
-        const el = e.currentTarget as HTMLElement;
-        el.style.borderColor = "var(--border-subtle)";
-        el.style.boxShadow = "none";
-      }}
+      transition={{ duration: 0.5, delay: index * 0.03, ease: [0.22, 1, 0.36, 1] as const }}
     >
       <div
-        className="flex items-center justify-center w-10 h-10 rounded-lg text-base font-bold"
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        className="tilt-card relative flex flex-col items-center justify-center gap-2.5 p-4 rounded-xl cursor-default overflow-hidden"
         style={{
-          background: `${tech.color}12`,
-          color: tech.color,
-          border: `1px solid ${tech.color}20`,
-          transform: "translateZ(10px)",
-          textShadow: `0 0 10px ${tech.color}40`,
+          background: "rgba(255,255,255,0.015)",
+          border: "1px solid rgba(255,255,255,0.04)",
+          minHeight: 90,
         }}
       >
-        {tech.icon}
+        <div ref={glowRef} className="absolute inset-0 opacity-0 transition-opacity duration-300 pointer-events-none" />
+        <div
+          className="relative flex items-center justify-center w-9 h-9 rounded-lg font-bold text-[11px] tracking-wider"
+          style={{
+            color: tech.color,
+            background: `${tech.color}10`,
+            border: `1px solid ${tech.color}18`,
+            textShadow: `0 0 12px ${tech.color}30`,
+            fontFamily: "var(--font-mono), monospace",
+          }}
+        >
+          {tech.icon}
+        </div>
+        <span className="text-[10px] font-medium" style={{ color: "var(--text-secondary)" }}>{tech.name}</span>
       </div>
-      <span className="text-[9px] font-medium tracking-wide" style={{ color: "var(--text-secondary)" }}>
-        {tech.name}
-      </span>
     </motion.div>
   );
 }
@@ -90,17 +96,15 @@ export default function TechStack3D() {
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] as const }}
       className="glass-panel overflow-hidden"
     >
-      <div className="flex items-center gap-2 px-4 py-2.5" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
-        <div className="flex gap-1">
-          <div className="w-2 h-2 rounded-full" style={{ background: "#64d2ff", opacity: 0.7 }} />
-          <div className="w-2 h-2 rounded-full" style={{ background: "var(--border-medium)" }} />
-          <div className="w-2 h-2 rounded-full" style={{ background: "var(--border-medium)" }} />
+      <div className="flex items-center gap-2 px-5 py-3" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
+        <span className="text-[10px] font-mono uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>stack.config</span>
+        <div className="ml-auto flex gap-3">
+          {["Languages", "Frontend", "Backend", "Tools"].map((c) => (
+            <span key={c} className="text-[9px] font-mono" style={{ color: "var(--text-muted)" }}>{c}</span>
+          ))}
         </div>
-        <span className="text-[10px] font-mono uppercase tracking-wider ml-1" style={{ color: "var(--text-muted)" }}>
-          stack.config
-        </span>
       </div>
-      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-5 gap-2 p-4" style={{ perspective: "800px" }}>
+      <div className="grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-10 gap-2 p-4">
         {techs.map((tech, i) => (
           <TechCard key={tech.name} tech={tech} index={i} />
         ))}

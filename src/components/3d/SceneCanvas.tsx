@@ -14,14 +14,18 @@ export default function SceneCanvas() {
   return (
     <div className="canvas-container">
       <Canvas
-        camera={{ position: [0, 0, 7], fov: 45 }}
+        camera={{ position: [0, 0, 5], fov: 50 }}
         dpr={isMobile ? 1 : Math.min(window.devicePixelRatio, 1.5)}
-        gl={{ antialias: !isMobile, alpha: true, powerPreference: "high-performance" }}
+        gl={{
+          antialias: !isMobile,
+          alpha: true,
+          powerPreference: "high-performance",
+          toneMapping: 0,
+        }}
         style={{ background: "#000000" }}
       >
         <Suspense fallback={null}>
-          {activeSection !== "playground" && <HeroScene />}
-          {activeSection === "playground" && <PlaygroundScene />}
+          {activeSection !== "playground" ? <HeroScene /> : <PlaygroundScene />}
         </Suspense>
         <Preload all />
       </Canvas>

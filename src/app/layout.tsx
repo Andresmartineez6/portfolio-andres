@@ -1,21 +1,41 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Andres Lorente Martinez | Software Engineer",
-  description: "Portfolio de Andres Lorente Martinez - Software Engineer especializado en desarrollo web full-stack.",
-  keywords: ["Andres Lorente Martinez", "Software Engineer", "Portfolio", "Full Stack", "TypeScript"],
+  description:
+    "Portfolio de Andres Lorente Martinez - Software Engineer especializado en desarrollo web full-stack.",
+  keywords: [
+    "Andres Lorente Martinez",
+    "Software Engineer",
+    "Portfolio",
+    "Full Stack",
+    "TypeScript",
+  ],
   authors: [{ name: "Andres Lorente Martinez" }],
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="es">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}>
+        {children}
+      </body>
     </html>
   );
 }
