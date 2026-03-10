@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio de Andres Lorente Martinez
 
-## Getting Started
+Portfolio personal de desarrollador con interfaz tipo software creativo profesional,
+graficos 3D en tiempo real, shaders GLSL personalizados, sistema de particulas reactivo
+y animaciones cinematograficas.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Tecnologias utilizadas
+
+### Framework base
+- **Next.js 16** (App Router) - Framework React con SSR y optimizacion automatica
+- **React 19** - Biblioteca de interfaces de usuario
+- **TypeScript** - Tipado estatico para mayor robustez
+
+### 3D y renderizado
+- **Three.js** - Motor de graficos 3D WebGL
+- **React Three Fiber** - Wrapper declarativo de Three.js para React
+- **@react-three/drei** - Helpers y abstracciones para R3F
+- **GLSL Shaders personalizados** - Vertex y fragment shaders escritos a mano
+
+### Animaciones
+- **Motion (motion.dev)** - Animaciones declarativas de alto rendimiento
+- **Lenis** - Smooth scroll cinematografico
+
+### Estilos
+- **TailwindCSS v4** - Utilidades CSS para layout
+- **CSS Variables** - Sistema de design tokens personalizado
+- **Glassmorphism** - Paneles translucidos con blur y bordes suaves
+
+### Estado
+- **Zustand** - Estado global ligero y reactivo
+
+### Herramientas
+- **ESLint** - Analisis estatico de codigo
+- **Prettier** - Formateo automatico
+- **Husky + lint-staged** - Git hooks para calidad de codigo
+
+---
+
+## Arquitectura del proyecto
+
+```
+src/
+  app/
+    layout.tsx                  # Layout raiz con fuentes y metadata
+    page.tsx                    # Pagina principal (carga dinamica sin SSR)
+    globals.css                 # Variables CSS, glassmorphism, grid layout
+  components/
+    AppShell.tsx                # Shell principal - orquesta layout completo
+    3d/
+      SceneCanvas.tsx           # Canvas Three.js con lazy loading de escenas
+      ParticleField.tsx         # Sistema de particulas con shaders GLSL
+      HeroMesh.tsx              # Malla icosaedro con displacement procedural
+      scenes/
+        HeroScene.tsx           # Escena principal (malla + particulas + luces)
+        PlaygroundScene.tsx     # Escena del laboratorio interactivo
+    ui/
+      TopBar.tsx                # Barra superior tipo aplicacion
+      Sidebar.tsx               # Navegacion lateral con iconos (desktop)
+      MobileNav.tsx             # Navegacion inferior (movil)
+      InspectorPanel.tsx        # Panel inspector derecho con propiedades
+      StatusBar.tsx             # Barra de estado inferior
+      LoadingScreen.tsx         # Pantalla de carga cinematografica
+      Workspace.tsx             # Area de contenido con smooth scroll
+      sections/
+        HeroSection.tsx         # Seccion hero con nombre y CTAs
+        AboutSection.tsx        # Seccion sobre mi, experiencia, skills
+        ProjectsSection.tsx     # Proyectos como modulos expandibles
+        PlaygroundSection.tsx   # Laboratorio visual interactivo
+        ContactSection.tsx      # Informacion de contacto
+  hooks/
+    useMousePosition.ts         # Posicion del cursor normalizada
+    useMobileDetect.ts          # Deteccion de dispositivo movil
+    useSmoothScroll.ts          # Inicializacion de Lenis smooth scroll
+  state/
+    store.ts                    # Estado global Zustand
+  types/
+    glsl.d.ts                   # Declaraciones de tipos para GLSL
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Instalacion
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+git clone <url-del-repositorio>
+cd portfolio-andres
+npm install
+npm run dev
+```
 
-## Learn More
+## Scripts disponibles
 
-To learn more about Next.js, take a look at the following resources:
+| Script          | Descripcion                                    |
+|-----------------|------------------------------------------------|
+| `npm run dev`   | Inicia el servidor de desarrollo con Turbopack |
+| `npm run build` | Genera la build de produccion optimizada       |
+| `npm run start` | Inicia el servidor de produccion               |
+| `npm run lint`  | Ejecuta ESLint para analisis de codigo         |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Despliegue con Docker
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+docker build -t portfolio-andres .
+docker compose up -d
+```
 
-## Deploy on Vercel
+La aplicacion estara disponible en el puerto 80 a traves de Nginx.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Autor
+
+**Andres Lorente Martinez** - Software Engineer
+
+- Email: andres@cabletea.com
+- GitHub: https://github.com/Andresmartineez6
+- LinkedIn: https://linkedin.com/in/AndresLorenteMartinez
