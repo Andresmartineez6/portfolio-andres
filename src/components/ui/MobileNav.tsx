@@ -14,14 +14,19 @@ export default function MobileNav() {
   const setActiveSection = useAppStore((s) => s.setActiveSection);
   return (
     <nav
-      className="glass-panel md:hidden flex items-center justify-around"
-      style={{ gridColumn: "1 / -1", borderRadius: 0, borderBottom: "none", borderLeft: "none", borderRight: "none", height: "40px" }}
+      className="md:hidden flex items-center justify-around"
+      style={{
+        gridColumn: "1 / -1", height: 48,
+        background: "rgba(10, 10, 10, 0.95)",
+        backdropFilter: "blur(40px)",
+        borderTop: "1px solid var(--border-subtle)",
+      }}
     >
       {navItems.map((item) => {
         const isActive = activeSection === item.id;
         return (
           <button key={item.id} onClick={() => setActiveSection(item.id)}
-            className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-md transition-colors"
+            className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all"
             style={{ color: isActive ? "var(--accent-primary)" : "var(--text-muted)" }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={item.path} /></svg>

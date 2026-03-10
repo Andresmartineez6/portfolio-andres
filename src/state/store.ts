@@ -38,8 +38,8 @@ const defaultPlaygroundParams: PlaygroundParams = {
   particleSize: 2.0,
   noiseScale: 1.5,
   noiseSpeed: 0.3,
-  colorA: "#7b6ff0",
-  colorB: "#f07b6f",
+  colorA: "#64d2ff",
+  colorB: "#5ac8fa",
   distortion: 0.5,
   bloomIntensity: 0.8,
 };

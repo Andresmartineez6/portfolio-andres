@@ -14,23 +14,29 @@ export default function Sidebar() {
   const setActiveSection = useAppStore((s) => s.setActiveSection);
   return (
     <aside
-      className="glass-panel hidden md:flex flex-col items-center py-3 gap-1"
-      style={{ gridRow: "2 / 4", borderRadius: 0, borderBottom: "none", borderLeft: "none", width: "56px" }}
+      className="hidden md:flex flex-col items-center py-3 gap-1"
+      style={{
+        gridRow: "2 / 4", width: 52,
+        background: "rgba(10, 10, 10, 0.8)",
+        backdropFilter: "blur(40px)",
+        borderRight: "1px solid var(--border-subtle)",
+      }}
     >
       {navItems.map((item) => {
         const isActive = activeSection === item.id;
         return (
           <button key={item.id} onClick={() => setActiveSection(item.id)} title={item.label}
-            className="relative flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200"
+            className="relative flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200"
             style={{ color: isActive ? "var(--accent-primary)" : "var(--text-muted)", background: isActive ? "var(--accent-glow)" : "transparent" }}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={item.path} /></svg>
-            {isActive && <div className="absolute left-0 w-0.5 h-5 rounded-r" style={{ background: "var(--accent-primary)" }} />}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={item.path} /></svg>
+            {isActive && <div className="absolute left-0 w-[2px] h-4 rounded-r" style={{ background: "var(--accent-primary)" }} />}
           </button>
         );
       })}
-      <div className="w-6 my-2" style={{ height: 1, background: "var(--border-subtle)" }} />
-      <div className="mt-auto mb-2"><span className="text-[9px] font-mono" style={{ color: "var(--text-muted)" }}>v1.0</span></div>
+      <div className="mt-auto mb-2">
+        <span className="text-[8px] font-mono" style={{ color: "var(--text-muted)" }}>v2.0</span>
+      </div>
     </aside>
   );
 }

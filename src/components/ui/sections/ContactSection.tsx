@@ -10,42 +10,45 @@ const contacts = [
 
 export default function ContactSection() {
   return (
-    <section className="min-h-screen px-4 md:px-6 py-16 flex flex-col gap-6">
-      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} className="flex flex-col gap-2 mb-4">
+    <section className="min-h-screen px-4 md:px-6 py-20 flex flex-col gap-8">
+      <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] as const }} className="flex flex-col gap-2">
         <span className="text-[10px] font-mono uppercase tracking-widest" style={{ color: "var(--accent-primary)" }}>04 / Contacto</span>
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>Conectemos</h2>
-        <p className="text-sm max-w-md" style={{ color: "var(--text-secondary)" }}>
-          Estoy disponible para nuevos proyectos y oportunidades. No dudes en contactarme por cualquiera de estos canales.
+        <h2 className="text-4xl md:text-5xl font-bold tracking-tight" style={{ letterSpacing: "-0.03em" }}>Conectemos</h2>
+        <p className="text-sm max-w-md mt-1" style={{ color: "var(--text-secondary)" }}>
+          Disponible para nuevos proyectos y oportunidades.
         </p>
       </motion.div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
         {contacts.map((contact, i) => (
           <motion.a key={contact.label} href={contact.href}
             target={contact.href.startsWith("http") ? "_blank" : undefined}
             rel={contact.href.startsWith("http") ? "noopener noreferrer" : undefined}
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="glass-panel glass-panel-hover p-4 flex items-center gap-4 cursor-pointer transition-all duration-300 no-underline"
+            transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] as const }}
+            className="glass-panel glass-panel-hover p-4 flex items-center gap-4 no-underline group"
             style={{ textDecoration: "none" }}>
-            <div className="flex items-center justify-center w-10 h-10 rounded-lg" style={{ background: "var(--accent-glow)", color: "var(--accent-primary)" }}>
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-300"
+              style={{ background: "var(--accent-glow)", color: "var(--accent-primary)", border: "1px solid var(--border-accent)" }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={contact.icon} /></svg>
             </div>
-            <div className="flex flex-col gap-0.5">
+            <div className="flex flex-col gap-0.5 min-w-0">
               <span className="text-[10px] font-mono uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{contact.label}</span>
-              <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{contact.value}</span>
+              <span className="text-sm font-medium truncate" style={{ color: "var(--text-primary)" }}>{contact.value}</span>
             </div>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="ml-auto" style={{ color: "var(--text-muted)" }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="ml-auto flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: "var(--text-muted)" }}>
               <line x1="7" y1="17" x2="17" y2="7" /><polyline points="7 7 17 7 17 17" />
             </svg>
           </motion.a>
         ))}
       </div>
+
       <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: 0.5 }} className="mt-16 flex flex-col items-center gap-4 text-center">
-        <p className="text-xs font-mono" style={{ color: "var(--text-muted)" }}>Construido con Next.js, Three.js, GLSL Shaders y Motion</p>
+        transition={{ duration: 0.8, delay: 0.4 }} className="mt-16 flex flex-col items-center gap-4 text-center">
+        <p className="text-xs font-mono" style={{ color: "var(--text-muted)" }}>Next.js · Three.js · GLSL · Motion · TailwindCSS</p>
         <div className="flex items-center gap-1.5">
-          <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#28c840" }} />
+          <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#34d399" }} />
           <span className="text-[10px] font-mono" style={{ color: "var(--text-muted)" }}>Disponible para trabajar</span>
         </div>
       </motion.div>

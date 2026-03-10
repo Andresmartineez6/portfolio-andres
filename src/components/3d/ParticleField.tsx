@@ -66,17 +66,17 @@ float snoise(vec3 v){
 
 void main(){
   vec3 pos=position;
-  float n1=snoise(pos*uNoiseScale+uTime*uNoiseSpeed);
-  float n2=snoise(pos*uNoiseScale*0.5+uTime*uNoiseSpeed*0.7+100.0);
+  float n1=snoise(pos*uNoiseScale+uTime*uNoiseSpeed)*0.6;
+  float n2=snoise(pos*uNoiseScale*0.5+uTime*uNoiseSpeed*0.5+100.0)*0.4;
   pos.x+=n1*uDistortion*aRandom;
   pos.y+=n2*uDistortion*aRandom;
-  pos.z+=snoise(pos*uNoiseScale*0.3+uTime*uNoiseSpeed*0.5)*uDistortion*0.5;
-  float mouseInf=1.0-smoothstep(0.0,2.0,length(pos.xy-uMouse*3.0));
-  pos.xy+=normalize(pos.xy-uMouse*3.0+0.001)*mouseInf*0.5;
+  pos.z+=snoise(pos*uNoiseScale*0.3+uTime*uNoiseSpeed*0.3)*uDistortion*0.3;
+  float mouseInf=1.0-smoothstep(0.0,3.0,length(pos.xy-uMouse*2.0));
+  pos.xy+=normalize(pos.xy-uMouse*2.0+0.001)*mouseInf*0.2;
   vec4 mvPos=modelViewMatrix*vec4(pos,1.0);
   vDistance=-mvPos.z;
-  vAlpha=smoothstep(15.0,2.0,vDistance)*(0.5+aRandom*0.5);
-  gl_PointSize=uParticleSize*(300.0/-mvPos.z)*(0.5+aRandom*0.5);
+  vAlpha=smoothstep(20.0,3.0,vDistance)*(0.15+aRandom*0.2);
+  gl_PointSize=uParticleSize*(200.0/-mvPos.z)*(0.3+aRandom*0.7);
   gl_Position=projectionMatrix*mvPos;
 }
 `;
@@ -92,24 +92,23 @@ void main(){
   vec2 center=gl_PointCoord-vec2(0.5);
   float dist=length(center);
   if(dist>0.5) discard;
-  float glow=exp(-dist*6.0)*0.8;
-  float core=smoothstep(0.5,0.0,dist);
-  float colorMix=sin(vDistance*0.3+uTime*0.5)*0.5+0.5;
+  float core=exp(-dist*8.0);
+  float colorMix=sin(vDistance*0.2+uTime*0.3)*0.5+0.5;
   vec3 color=mix(uColorA,uColorB,colorMix);
-  float alpha=(core*0.6+glow*0.4)*vAlpha;
+  float alpha=core*vAlpha;
   gl_FragColor=vec4(color,alpha);
 }
 `;
 
 interface ParticleFieldProps { count?: number; radius?: number; }
 
-export default function ParticleField({ count: countOverride, radius = 6 }: ParticleFieldProps) {
+export default function ParticleField({ count: countOverride, radius = 8 }: ParticleFieldProps) {
   const meshRef = useRef<THREE.Points>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const isMobile = useAppStore((s) => s.isMobile);
   const cursorPosition = useAppStore((s) => s.cursorPosition);
   const params = useAppStore((s) => s.playgroundParams);
-  const count = countOverride ?? (isMobile ? 2000 : params.particleCount);
+  const count = countOverride ?? (isMobile ? 800 : params.particleCount);
 
   const { positions, randoms } = useMemo(() => {
     const pos = new Float32Array(count * 3);

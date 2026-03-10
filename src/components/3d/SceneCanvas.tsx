@@ -14,10 +14,10 @@ export default function SceneCanvas() {
   return (
     <div className="canvas-container">
       <Canvas
-        camera={{ position: [0, 0, 6], fov: 50 }}
-        dpr={isMobile ? 1 : Math.min(window.devicePixelRatio, 2)}
+        camera={{ position: [0, 0, 7], fov: 45 }}
+        dpr={isMobile ? 1 : Math.min(window.devicePixelRatio, 1.5)}
         gl={{ antialias: !isMobile, alpha: true, powerPreference: "high-performance" }}
-        style={{ background: "transparent" }}
+        style={{ background: "#000000" }}
       >
         <Suspense fallback={null}>
           {activeSection !== "playground" && <HeroScene />}

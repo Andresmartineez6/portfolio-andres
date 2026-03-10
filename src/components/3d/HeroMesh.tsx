@@ -67,13 +67,12 @@ void main(){
   vUv=uv;
   vNormal=normal;
   vec3 pos=position;
-  float n1=snoise(pos*1.5+uTime*0.2);
-  float n2=snoise(pos*3.0+uTime*0.1)*0.5;
-  float n3=snoise(pos*6.0+uTime*0.3)*0.25;
-  float displacement=(n1+n2+n3)*uDistortion;
-  vec2 mouseDir=uMouse*1.5;
+  float n1=snoise(pos*1.2+uTime*0.15);
+  float n2=snoise(pos*2.5+uTime*0.08)*0.4;
+  float displacement=(n1+n2)*uDistortion;
+  vec2 mouseDir=uMouse*1.0;
   float mouseDist=length(pos.xy-mouseDir);
-  float mouseEff=smoothstep(2.0,0.0,mouseDist)*uHover*0.3;
+  float mouseEff=smoothstep(2.5,0.0,mouseDist)*uHover*0.15;
   displacement+=mouseEff;
   pos+=normal*displacement;
   vDisplacement=displacement;
@@ -84,9 +83,6 @@ void main(){
 
 const fragmentShader = `
 uniform float uTime;
-uniform vec3 uColorA;
-uniform vec3 uColorB;
-uniform vec3 uColorC;
 varying vec2 vUv;
 varying float vDisplacement;
 varying vec3 vNormal;
@@ -94,17 +90,17 @@ varying vec3 vPosition;
 
 void main(){
   vec3 viewDir=normalize(cameraPosition-vPosition);
-  float fresnel=pow(1.0-max(dot(viewDir,vNormal),0.0),3.0);
-  float cm1=smoothstep(-0.3,0.3,vDisplacement);
-  float cm2=sin(vUv.x*6.28+uTime*0.3)*0.5+0.5;
-  vec3 base=mix(uColorA,uColorB,cm1);
-  base=mix(base,uColorC,cm2*0.3);
+  float fresnel=pow(1.0-max(dot(viewDir,vNormal),0.0),4.0);
+  vec3 darkBase=vec3(0.02,0.02,0.04);
+  vec3 edgeColor=vec3(0.25,0.5,0.6);
+  vec3 highlightColor=vec3(0.4,0.82,1.0);
   vec3 lightDir=normalize(vec3(1.0,1.0,2.0));
-  float diffuse=max(dot(vNormal,lightDir),0.0)*0.5+0.5;
-  vec3 finalC=base*diffuse;
-  finalC+=vec3(0.5,0.4,1.0)*fresnel*0.6;
-  finalC+=sin(vPosition.y*40.0+uTime*2.0)*0.02;
-  float alpha=0.85+fresnel*0.15;
+  float diffuse=max(dot(vNormal,lightDir),0.0)*0.3+0.7;
+  vec3 finalC=darkBase*diffuse;
+  finalC+=edgeColor*fresnel*0.5;
+  finalC+=highlightColor*fresnel*fresnel*0.3;
+  finalC+=sin(vPosition.y*30.0+uTime*1.5)*0.005;
+  float alpha=0.35+fresnel*0.45;
   gl_FragColor=vec4(finalC,alpha);
 }
 `;
@@ -118,12 +114,9 @@ export default function HeroMesh() {
   const uniforms = useMemo(
     () => ({
       uTime: { value: 0 },
-      uDistortion: { value: 0.3 },
+      uDistortion: { value: 0.12 },
       uMouse: { value: new THREE.Vector2(0, 0) },
       uHover: { value: 0 },
-      uColorA: { value: new THREE.Color("#1a0a2e") },
-      uColorB: { value: new THREE.Color("#7b6ff0") },
-      uColorC: { value: new THREE.Color("#f07b6f") },
     }),
     []
   );
@@ -133,26 +126,34 @@ export default function HeroMesh() {
     const mat = materialRef.current;
     mat.uniforms.uTime.value = state.clock.elapsedTime;
     mat.uniforms.uMouse.value.set(cursorPosition.x, cursorPosition.y);
-    mat.uniforms.uHover.value += (hoverRef.current - mat.uniforms.uHover.value) * 0.05;
-    meshRef.current.rotation.y = state.clock.elapsedTime * 0.05;
-    meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.03) * 0.1;
+    mat.uniforms.uHover.value += (hoverRef.current - mat.uniforms.uHover.value) * 0.03;
+    meshRef.current.rotation.y = state.clock.elapsedTime * 0.03;
+    meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.02) * 0.08;
   });
 
   return (
-    <mesh
-      ref={meshRef}
-      onPointerEnter={() => { hoverRef.current = 1; }}
-      onPointerLeave={() => { hoverRef.current = 0; }}
-    >
-      <icosahedronGeometry args={[1.8, 64]} />
-      <shaderMaterial
-        ref={materialRef}
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-        uniforms={uniforms}
-        transparent
-        side={THREE.DoubleSide}
-      />
-    </mesh>
+    <group position={[0, 0, -1]}>
+      <mesh
+        ref={meshRef}
+        onPointerEnter={() => { hoverRef.current = 1; }}
+        onPointerLeave={() => { hoverRef.current = 0; }}
+      >
+        <icosahedronGeometry args={[1.1, 48]} />
+        <shaderMaterial
+          ref={materialRef}
+          vertexShader={vertexShader}
+          fragmentShader={fragmentShader}
+          uniforms={uniforms}
+          transparent
+          side={THREE.DoubleSide}
+          depthWrite={false}
+        />
+      </mesh>
+      {/* Wireframe overlay */}
+      <mesh rotation-y={0.3}>
+        <icosahedronGeometry args={[1.25, 2]} />
+        <meshBasicMaterial wireframe transparent opacity={0.04} color="#64d2ff" />
+      </mesh>
+    </group>
   );
 }
