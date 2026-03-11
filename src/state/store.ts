@@ -10,6 +10,7 @@ interface AppState {
   cameraFov: number;
   hoveredObject: string | null;
   selectedObject: string | null;
+  focusMode: boolean;
   overlayVisible: boolean;
   overlayContent: string | null;
   isLoading: boolean;
@@ -20,6 +21,8 @@ interface AppState {
   setScene: (scene: SceneId) => void;
   setHoveredObject: (id: string | null) => void;
   setSelectedObject: (id: string | null) => void;
+  focusObject: (id: string, position: [number, number, number], target: [number, number, number], fov?: number) => void;
+  unfocusObject: () => void;
   setOverlay: (visible: boolean, content?: string | null) => void;
   setLoading: (loading: boolean) => void;
   setLoadingProgress: (progress: number) => void;
@@ -29,14 +32,15 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set) => ({
-  currentScene: "hero",
+  currentScene: "room",
   previousScene: null,
   isTransitioning: false,
-  cameraPosition: SCENE_CONFIGS.hero.cameraPosition,
-  cameraTarget: SCENE_CONFIGS.hero.cameraTarget,
-  cameraFov: SCENE_CONFIGS.hero.cameraFov,
+  cameraPosition: SCENE_CONFIGS.room.cameraPosition,
+  cameraTarget: SCENE_CONFIGS.room.cameraTarget,
+  cameraFov: SCENE_CONFIGS.room.cameraFov,
   hoveredObject: null,
   selectedObject: null,
+  focusMode: false,
   overlayVisible: false,
   overlayContent: null,
   isLoading: true,
@@ -55,11 +59,30 @@ export const useAppStore = create<AppState>((set) => ({
       cameraFov: config.cameraFov,
       hoveredObject: null,
       selectedObject: null,
+      focusMode: false,
     }));
     setTimeout(() => set({ isTransitioning: false }), 1200);
   },
   setHoveredObject: (id) => set({ hoveredObject: id }),
   setSelectedObject: (id) => set({ selectedObject: id }),
+  focusObject: (id, position, target, fov) => set({
+    selectedObject: id,
+    focusMode: true,
+    cameraPosition: position,
+    cameraTarget: target,
+    cameraFov: fov ?? 40,
+  }),
+  unfocusObject: () => {
+    const scene = useAppStore.getState().currentScene;
+    const config = SCENE_CONFIGS[scene];
+    set({
+      selectedObject: null,
+      focusMode: false,
+      cameraPosition: config.cameraPosition,
+      cameraTarget: config.cameraTarget,
+      cameraFov: config.cameraFov,
+    });
+  },
   setOverlay: (visible, content = null) => set({ overlayVisible: visible, overlayContent: content }),
   setLoading: (loading) => set({ isLoading: loading }),
   setLoadingProgress: (progress) => set({ loadingProgress: progress }),

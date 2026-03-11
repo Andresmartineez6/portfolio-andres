@@ -25,12 +25,12 @@ export const SCENE_CONFIGS: Record<SceneId, SceneConfig> = {
   room: {
     id: "room",
     label: "Habitacion",
-    cameraPosition: [3, 2.5, 3],
-    cameraTarget: [0, 1, 0],
-    cameraFov: 45,
+    cameraPosition: [2.8, 2.0, 2.5],
+    cameraTarget: [0, 0.85, -0.5],
+    cameraFov: 42,
     fogColor: "#0a0a0a",
-    fogNear: 8,
-    fogFar: 30,
+    fogNear: 4,
+    fogFar: 12,
   },
   project: {
     id: "project",
