@@ -3,15 +3,16 @@ import { useState, useEffect, useCallback } from "react";
 import { useAppStore } from "@/state/store";
 
 const messages = [
-  "Inicializando WebGL...",
+  "Inicializando motor 3D...",
   "Compilando shaders...",
   "Cargando geometrias...",
-  "Renderizando escena...",
-  "Preparando interfaz...",
+  "Preparando escena...",
+  "Listo.",
 ];
 
 export default function LoadingScreen() {
   const setLoaded = useAppStore((s) => s.setLoaded);
+  const setLoading = useAppStore((s) => s.setLoading);
   const [progress, setProgress] = useState(0);
   const [msgIdx, setMsgIdx] = useState(0);
   const [visible, setVisible] = useState(true);
@@ -19,8 +20,12 @@ export default function LoadingScreen() {
 
   const finish = useCallback(() => {
     setFade(true);
-    setTimeout(() => { setVisible(false); setLoaded(true); }, 700);
-  }, [setLoaded]);
+    setTimeout(() => {
+      setVisible(false);
+      setLoaded(true);
+      setLoading(false);
+    }, 700);
+  }, [setLoaded, setLoading]);
 
   useEffect(() => {
     let frame = 0;
@@ -40,32 +45,25 @@ export default function LoadingScreen() {
   if (!visible) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center"
-      style={{
-        background: "#000",
-        opacity: fade ? 0 : 1,
-        transition: "opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1)",
-      }}
-    >
-      {/* Orbital rings */}
-      <div className="relative w-24 h-24 mb-12">
-        <div className="absolute inset-0 rounded-full animate-spin-slow" style={{ border: "1px solid rgba(100,210,255,0.08)", animationDuration: "8s" }} />
-        <div className="absolute inset-2 rounded-full animate-spin-slow" style={{ border: "1px solid rgba(100,210,255,0.12)", animationDuration: "6s", animationDirection: "reverse" }} />
-        <div className="absolute inset-4 rounded-full animate-spin-slow" style={{ border: "1px solid rgba(100,210,255,0.06)", animationDuration: "10s" }} />
-        <div className="absolute top-1/2 left-1/2 w-1.5 h-1.5 rounded-full -translate-x-1/2 -translate-y-1/2"
-          style={{ background: "var(--accent-primary)", boxShadow: "0 0 20px rgba(100,210,255,0.3)" }} />
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 100,
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      background: "#0a0a0a",
+      opacity: fade ? 0 : 1,
+      transition: "opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1)",
+      fontFamily: "var(--font-inter), system-ui, sans-serif",
+    }}>
+      <div style={{ position: "relative", width: 96, height: 96, marginBottom: 48 }}>
+        <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px solid rgba(100,210,255,0.08)", animation: "spin 8s linear infinite" }} />
+        <div style={{ position: "absolute", inset: 8, borderRadius: "50%", border: "1px solid rgba(100,210,255,0.12)", animation: "spin 6s linear infinite reverse" }} />
+        <div style={{ position: "absolute", inset: 16, borderRadius: "50%", border: "1px solid rgba(100,210,255,0.06)", animation: "spin 10s linear infinite" }} />
+        <div style={{ position: "absolute", top: "50%", left: "50%", width: 6, height: 6, borderRadius: "50%", transform: "translate(-50%, -50%)", background: "#64d2ff", boxShadow: "0 0 20px rgba(100,210,255,0.3)" }} />
       </div>
-      {/* Progress */}
-      <div className="flex flex-col items-center gap-5 w-48">
-        <div className="w-full h-[1px] rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.04)" }}>
-          <div className="h-full rounded-full" style={{
-            width: `${progress * 100}%`,
-            background: "linear-gradient(90deg, var(--accent-primary), rgba(255,255,255,0.5))",
-            transition: "width 0.1s linear",
-          }} />
+      <div style={{ width: 192, display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
+        <div style={{ width: "100%", height: 1, borderRadius: 1, background: "rgba(255,255,255,0.04)", overflow: "hidden" }}>
+          <div style={{ height: "100%", borderRadius: 1, width: (progress * 100) + "%", background: "linear-gradient(90deg, #64d2ff, rgba(255,255,255,0.5))", transition: "width 0.1s linear" }} />
         </div>
-        <span className="text-[10px] font-mono tracking-wider" style={{ color: "var(--text-muted)" }}>
+        <span style={{ fontSize: 10, fontFamily: "monospace", letterSpacing: "0.1em", color: "rgba(255,255,255,0.2)" }}>
           {messages[msgIdx]}
         </span>
       </div>

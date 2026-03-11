@@ -1,70 +1,69 @@
 import { create } from "zustand";
-
-export type Section = "hero" | "about" | "projects" | "playground" | "contact";
-
-export interface PlaygroundParams {
-  particleCount: number;
-  particleSize: number;
-  noiseScale: number;
-  noiseSpeed: number;
-  colorA: string;
-  colorB: string;
-  distortion: number;
-  bloomIntensity: number;
-}
+import { type SceneId, SCENE_CONFIGS } from "@/types/scenes";
 
 interface AppState {
-  activeSection: Section;
-  setActiveSection: (section: Section) => void;
-  inspectorOpen: boolean;
-  toggleInspector: () => void;
-  selectedProject: string | null;
-  setSelectedProject: (id: string | null) => void;
-  scrollProgress: number;
-  setScrollProgress: (progress: number) => void;
-  cursorPosition: { x: number; y: number };
-  setCursorPosition: (x: number, y: number) => void;
+  currentScene: SceneId;
+  previousScene: SceneId | null;
+  isTransitioning: boolean;
+  cameraPosition: [number, number, number];
+  cameraTarget: [number, number, number];
+  cameraFov: number;
+  hoveredObject: string | null;
+  selectedObject: string | null;
+  overlayVisible: boolean;
+  overlayContent: string | null;
   isLoading: boolean;
-  setLoading: (loading: boolean) => void;
+  loadingProgress: number;
   loaded: boolean;
-  setLoaded: (loaded: boolean) => void;
-  playgroundParams: PlaygroundParams;
-  setPlaygroundParam: <K extends keyof PlaygroundParams>(key: K, value: PlaygroundParams[K]) => void;
-  resetPlaygroundParams: () => void;
   isMobile: boolean;
+  cursorPosition: { x: number; y: number };
+  setScene: (scene: SceneId) => void;
+  setHoveredObject: (id: string | null) => void;
+  setSelectedObject: (id: string | null) => void;
+  setOverlay: (visible: boolean, content?: string | null) => void;
+  setLoading: (loading: boolean) => void;
+  setLoadingProgress: (progress: number) => void;
+  setLoaded: (loaded: boolean) => void;
   setIsMobile: (mobile: boolean) => void;
+  setCursorPosition: (x: number, y: number) => void;
 }
 
-const defaultPlaygroundParams: PlaygroundParams = {
-  particleCount: 3000,
-  particleSize: 2.0,
-  noiseScale: 1.5,
-  noiseSpeed: 0.3,
-  colorA: "#64d2ff",
-  colorB: "#5ac8fa",
-  distortion: 0.5,
-  bloomIntensity: 0.8,
-};
-
 export const useAppStore = create<AppState>((set) => ({
-  activeSection: "hero",
-  setActiveSection: (section) => set({ activeSection: section }),
-  inspectorOpen: true,
-  toggleInspector: () => set((s) => ({ inspectorOpen: !s.inspectorOpen })),
-  selectedProject: null,
-  setSelectedProject: (id) => set({ selectedProject: id }),
-  scrollProgress: 0,
-  setScrollProgress: (progress) => set({ scrollProgress: progress }),
-  cursorPosition: { x: 0, y: 0 },
-  setCursorPosition: (x, y) => set({ cursorPosition: { x, y } }),
+  currentScene: "hero",
+  previousScene: null,
+  isTransitioning: false,
+  cameraPosition: SCENE_CONFIGS.hero.cameraPosition,
+  cameraTarget: SCENE_CONFIGS.hero.cameraTarget,
+  cameraFov: SCENE_CONFIGS.hero.cameraFov,
+  hoveredObject: null,
+  selectedObject: null,
+  overlayVisible: false,
+  overlayContent: null,
   isLoading: true,
-  setLoading: (loading) => set({ isLoading: loading }),
+  loadingProgress: 0,
   loaded: false,
-  setLoaded: (loaded) => set({ loaded }),
-  playgroundParams: { ...defaultPlaygroundParams },
-  setPlaygroundParam: (key, value) =>
-    set((s) => ({ playgroundParams: { ...s.playgroundParams, [key]: value } })),
-  resetPlaygroundParams: () => set({ playgroundParams: { ...defaultPlaygroundParams } }),
   isMobile: false,
+  cursorPosition: { x: 0, y: 0 },
+  setScene: (scene) => {
+    const config = SCENE_CONFIGS[scene];
+    set((s) => ({
+      previousScene: s.currentScene,
+      currentScene: scene,
+      isTransitioning: true,
+      cameraPosition: config.cameraPosition,
+      cameraTarget: config.cameraTarget,
+      cameraFov: config.cameraFov,
+      hoveredObject: null,
+      selectedObject: null,
+    }));
+    setTimeout(() => set({ isTransitioning: false }), 1200);
+  },
+  setHoveredObject: (id) => set({ hoveredObject: id }),
+  setSelectedObject: (id) => set({ selectedObject: id }),
+  setOverlay: (visible, content = null) => set({ overlayVisible: visible, overlayContent: content }),
+  setLoading: (loading) => set({ isLoading: loading }),
+  setLoadingProgress: (progress) => set({ loadingProgress: progress }),
+  setLoaded: (loaded) => set({ loaded }),
   setIsMobile: (mobile) => set({ isMobile: mobile }),
+  setCursorPosition: (x, y) => set({ cursorPosition: { x, y } }),
 }));
